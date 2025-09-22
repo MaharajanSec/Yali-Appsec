@@ -58,8 +58,11 @@ Clone the repo and prepare a Python virtual environment:
 ```powershell
 
 PS D:\yalitech\Yali-Appsec> python -m venv .venv
+
 PS D:\yalitech\Yali-Appsec> .venv\Scripts\Activate.ps1
+
 (.venv) PS D:\yalitech\Yali-Appsec> pip install -r requirements.txt
+
 Collecting requests>=2.0 (from -r requirements.txt (line 1))
   Using cached requests-2.32.5-py3-none-any.whl.metadata (4.9 kB)
 Collecting charset_normalizer<4,>=2 (from requests>=2.0->-r requirements.txt (line 1))
@@ -75,7 +78,9 @@ Using cached certifi-2025.8.3-py3-none-any.whl (161 kB)
 Using cached charset_normalizer-3.4.3-cp313-cp313-win_amd64.whl (107 kB)
 Using cached idna-3.10-py3-none-any.whl (70 kB)
 Using cached urllib3-2.5.0-py3-none-any.whl (129 kB)
+
 Installing collected packages: urllib3, idna, charset_normalizer, certifi, requests
+
 Successfully installed certifi-2025.8.3 charset_normalizer-3.4.3 idna-3.10 requests-2.32.5 urllib3-2.5.0
 
 [notice] A new release of pip is available: 25.0.1 -> 25.2
@@ -125,44 +130,6 @@ All the checked headers are present (good).
 
 Cookies:
  - no Set-Cookie header seen
-
--> Advice: Low risk from these checks. Continue monitoring.
-
-git clone https://github.com/MaharajanSec/Yali-Appsec.git
-cd Yali-Appsec
-
-# create & activate virtualenv (Windows PowerShell)
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-
-# install deps
-pip install -r requirements.txt
-
-Run a quick scan:
-python headscan.py https://example.com
-
-You can also scan multiple sites from a file (one URL per line):
-python headscan.py -f urls.txt
-
-What it checks (plain language)
-
-The tool looks for common security headers and cookie flags:
-
-Content-Security-Policy — controls what external scripts/images/frames the page can load.
-
-X-Content-Type-Options — prevents MIME sniffing (nosniff).
-
-X-Frame-Options — prevents clickjacking (or use CSP frame-ancestors).
-
-Strict-Transport-Security — tells browsers to always use HTTPS.
-
-Referrer-Policy — controls what URL data is sent to other sites.
-
-Permissions-Policy — controls browser features like camera/microphone.
-
-Cookie flags — checks if cookies include Secure, HttpOnly, and SameSite.
-
-The script prints friendly messages like VULNERABLE / WARNING / OK style lines to help non-experts understand.
 
 
 👨‍💻 Yali Tech
