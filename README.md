@@ -193,8 +193,8 @@ def set_security_headers(resp):
 
 ## About Yali Tech
 
-This repo is part of **Yali Tech’s** learning and research in Application Security. We share our tools and labs openly for **educational purposes only**.
 
-**Disclaimer:** These resources are for educational use only. Do not use them on systems you don’t own or without explicit permission.
+Made with ❤️ at Yali Tech for learners starting their journey in AppSec. We share our tools and labs openly for educational purposes only.
+Disclaimer: These resources are for educational use only. Do not use them on systems you don’t own or without explicit permission.
 
 GitHub: [MaharajanSec](https://github.com/MaharajanSec)
