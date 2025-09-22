@@ -1,51 +1,37 @@
-# \# 🛡️ AppSec Lab
+# Yali AppSec Lab
 
-# 
+A collection of **Application Security (AppSec)** resources, labs, and tools.  
+This repository is designed for learning, testing, and demonstrating application security practices, aligned with OWASP Top 10 and other security standards.
 
-# A collection of Application Security (AppSec) resources, labs, and tools.
+---
 
-# This repository is designed for learning, testing, and demonstrating application security practices, aligned with OWASP Top 10 and other security standards.
+## Repository structure (suggested)
 
-
-# \## Repository Structure
-
-# 
-
+```
 appsec-toolkit/
-
 ├── headscan.py      # security header checker
-
 ├── xsscheck.py      # reflected XSS tester
-
 ├── sqli.py          # naive SQLi error detector
-
 ├── authcheck.py     # cookie/session security checks
-
 ├── README.md        # simple usage guide
-
 ├── requirements.txt # requests, bs4
+```
 
+Other useful folders you can add later:
+- `labs/` → Hands-on vulnerable apps and exercises (XSS, SQLi, CSRF)
+- `tools/` → Custom scripts, payloads, and automation helpers
+- `docs/` → Cheat sheets, references, and study notes
 
+Learning resources (links you may add in docs):
+- OWASP Top 10
+- PortSwigger Web Security Academy
+- Awesome AppSec
 
-Contents
+---
 
-labs/ → Hands-on vulnerable apps and exercises (e.g., XSS, SQLi, CSRF)
-tools/ → Custom security scripts, payloads, and automation helpers
-docs/ → Cheat sheets, references, and study notes
+## Headscan
 
-Learning Resources
-
-OWASP Top 10
-PortSwigger Web Security Academy
-Awesome AppSec
-
-## Quick start
-
-Clone and install:
-
-# Headscan
-
-A small, friendly header checker for beginners — quick AppSec triage for HTTP response headers and cookie flags.
+**headscan.py** — a small, friendly header checker for beginners. Quick AppSec triage for HTTP response headers and cookie flags.
 
 > **Use responsibly.** This repository is for educational purposes only. Do **not** run scans against systems you don't own or have explicit permission to test. Unauthorized testing may be illegal.
 
@@ -56,48 +42,30 @@ A small, friendly header checker for beginners — quick AppSec triage for HTTP 
 Clone the repo and prepare a Python virtual environment:
 
 ```powershell
-
 PS D:\yalitech\Yali-Appsec> python -m venv .venv
-
 PS D:\yalitech\Yali-Appsec> .venv\Scripts\Activate.ps1
-
 (.venv) PS D:\yalitech\Yali-Appsec> pip install -r requirements.txt
+```
 
-Collecting requests>=2.0 (from -r requirements.txt (line 1))
-  Using cached requests-2.32.5-py3-none-any.whl.metadata (4.9 kB)
-Collecting charset_normalizer<4,>=2 (from requests>=2.0->-r requirements.txt (line 1))
-  Using cached charset_normalizer-3.4.3-cp313-cp313-win_amd64.whl.metadata (37 kB)
-Collecting idna<4,>=2.5 (from requests>=2.0->-r requirements.txt (line 1))
-  Using cached idna-3.10-py3-none-any.whl.metadata (10 kB)
-Collecting urllib3<3,>=1.21.1 (from requests>=2.0->-r requirements.txt (line 1))
-  Using cached urllib3-2.5.0-py3-none-any.whl.metadata (6.5 kB)
-Collecting certifi>=2017.4.17 (from requests>=2.0->-r requirements.txt (line 1))
-  Using cached certifi-2025.8.3-py3-none-any.whl.metadata (2.4 kB)
-Using cached requests-2.32.5-py3-none-any.whl (64 kB)
-Using cached certifi-2025.8.3-py3-none-any.whl (161 kB)
-Using cached charset_normalizer-3.4.3-cp313-cp313-win_amd64.whl (107 kB)
-Using cached idna-3.10-py3-none-any.whl (70 kB)
-Using cached urllib3-2.5.0-py3-none-any.whl (129 kB)
+(Example installer output omitted for brevity — pip will download `requests` and dependencies.)
 
-Installing collected packages: urllib3, idna, charset_normalizer, certifi, requests
+If pip asks you to update, you can run:
+```powershell
+python.exe -m pip install --upgrade pip
+```
 
-Successfully installed certifi-2025.8.3 charset_normalizer-3.4.3 idna-3.10 requests-2.32.5 urllib3-2.5.0
+---
 
-[notice] A new release of pip is available: 25.0.1 -> 25.2
-[notice] To update, run: python.exe -m pip install --upgrade pip
-(.venv) PS D:\yalitech\Yali-Appsec>  python.exe -m pip install --upgrade pip
-Requirement already satisfied: pip in d:\yalitech\yali-appsec\.venv\lib\site-packages (25.0.1)
-Collecting pip
-  Using cached pip-25.2-py3-none-any.whl.metadata (4.7 kB)
-Using cached pip-25.2-py3-none-any.whl (1.8 MB)
-Installing collected packages: pip
-  Attempting uninstall: pip
-    Found existing installation: pip 25.0.1
-    Uninstalling pip-25.0.1:
-      Successfully uninstalled pip-25.0.1
-Successfully installed pip-25.2
-(.venv) PS D:\yalitech\Yali-Appsec> python headscan.py https://example.com
+## Usage
 
+Run the header scan:
+
+```powershell
+python headscan.py https://example.com
+```
+
+### Sample output (insecure site)
+```
 https://example.com  -> HTTP 200
 Overall quick risk: HIGH
 
@@ -121,8 +89,10 @@ Cookies:
 -> Advice: This site has high-risk gaps. If it's your site, apply the quick fixes above now.
 
 Tip: For real confirmation, open the site in a browser and check Network → Response Headers.
-(.venv) PS D:\yalitech\Yali-Appsec> python headscan.py https://owasp.com
+```
 
+### Sample output (secure site)
+```
 https://owasp.com  -> HTTP 200
 Overall quick risk: LOW
 
@@ -130,11 +100,101 @@ All the checked headers are present (good).
 
 Cookies:
  - no Set-Cookie header seen
+```
 
+---
 
-👨‍💻 Yali Tech
+## Quick header cheat-sheet (for rookies)
 
-This repo is part of Yali Tech’s learning and research in Application Security. We’re sharing our tools and labs openly
-for educational purposes only.
+- **Content-Security-Policy (CSP)**  
+  Purpose: restrict which scripts, images and resources the page can load — strong defense against XSS.  
+  Quick example: `Content-Security-Policy: default-src 'self';`
+
+- **X-Content-Type-Options**  
+  Purpose: prevent MIME sniffing.  
+  Quick example: `X-Content-Type-Options: nosniff`
+
+- **X-Frame-Options**  
+  Purpose: prevent clickjacking by blocking framing.  
+  Quick examples: `X-Frame-Options: DENY` or `X-Frame-Options: SAMEORIGIN`
+
+- **Strict-Transport-Security (HSTS)**  
+  Purpose: tell browsers to always use HTTPS.  
+  Quick example: `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+
+- **Referrer-Policy**  
+  Purpose: control how much referrer information is shared.  
+  Quick example: `Referrer-Policy: strict-origin-when-cross-origin`
+
+- **Permissions-Policy**  
+  Purpose: opt-out of browser features (camera, mic, geolocation).  
+  Quick example: `Permissions-Policy: geolocation=(), camera=(), microphone=()`
+
+- **Set-Cookie flags** (if cookies are used)  
+  Always set cookie attributes: `Secure; HttpOnly; SameSite=Strict` (or Lax depending on flow).
+
+---
+
+## Quick server snippets (copy-paste)
+
+**NGINX**
+```nginx
+add_header Content-Security-Policy "default-src 'self';" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Permissions-Policy "geolocation=(), camera=(), microphone=()" always;
+```
+
+**Apache**
+```apache
+Header always set Content-Security-Policy "default-src 'self';"
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set Permissions-Policy "geolocation=(), camera=(), microphone=()"
+```
+
+**Flask (after_request)**
+```python
+@app.after_request
+def set_security_headers(resp):
+    resp.headers['Content-Security-Policy'] = "default-src 'self'"
+    resp.headers['X-Content-Type-Options'] = 'nosniff'
+    resp.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    resp.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
+    resp.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    resp.headers['Permissions-Policy'] = 'geolocation=(), camera=(), microphone=()'
+    return resp
+```
+
+---
+
+## Troubleshooting & tips
+
+- Use `curl -I https://your-site` or PowerShell:
+  ```powershell
+  (Invoke-WebRequest -Uri "https://example.com" -Method Head).Headers
+  ```
+  to view raw response headers.
+
+- If the site is behind a proxy or CDN (Cloudflare, etc.), headers may be added/removed by the proxy — test the origin and the public URL.
+
+- If `headscan.py` shows `no Set-Cookie header seen` but your app uses sessions, try the authenticated flow (login) — cookies are often set only after login.
+
+- If PowerShell blocks script activation, allow for current user:
+  ```powershell
+  Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned -Force
+  ```
+
+---
+
+## About Yali Tech
+
+This repo is part of **Yali Tech’s** learning and research in Application Security. We share our tools and labs openly for **educational purposes only**.
+
+**Disclaimer:** These resources are for educational use only. Do not use them on systems you don’t own or without explicit permission.
+
 GitHub: [MaharajanSec](https://github.com/MaharajanSec)
-
