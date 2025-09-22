@@ -6,13 +6,8 @@
 
 # This repository is designed for learning, testing, and demonstrating application security practices, aligned with OWASP Top 10 and other security standards.
 
-# 
 
-# ---
-
-# 
-
-# \## 📂 Repository Structure
+# \## Repository Structure
 
 # 
 
@@ -32,15 +27,13 @@ appsec-toolkit/
 
 
 
-📘 Contents
-
-
+Contents
 
 labs/ → Hands-on vulnerable apps and exercises (e.g., XSS, SQLi, CSRF)
 tools/ → Custom security scripts, payloads, and automation helpers
 docs/ → Cheat sheets, references, and study notes
 
-📚 Learning Resources
+Learning Resources
 
 OWASP Top 10
 PortSwigger Web Security Academy
