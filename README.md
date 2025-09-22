@@ -43,31 +43,54 @@ Awesome AppSec
 
 Clone and install:
 
-powershell
+# Headscan
+
+A small, friendly header checker for beginners — quick AppSec triage for HTTP response headers and cookie flags.
+
+> **Use responsibly.** This repository is for educational purposes only. Do **not** run scans against systems you don't own or have explicit permission to test. Unauthorized testing may be illegal.
+
+---
+
+## Quick start
+
+Clone the repo and prepare a Python virtual environment:
+
+```powershell
 git clone https://github.com/MaharajanSec/Yali-Appsec.git
 cd Yali-Appsec
+
+# create & activate virtualenv (Windows PowerShell)
 python -m venv .venv
 .venv\Scripts\Activate.ps1
+
+# install deps
 pip install -r requirements.txt
 
+Run a quick scan:
 python headscan.py https://example.com
 
-This repository is for educational purposes only.
-Do not use the labs, tools, or payloads on systems you don’t own or have explicit permission to test.
-Unauthorized use may be illegal.
+You can also scan multiple sites from a file (one URL per line):
+python headscan.py -f urls.txt
 
+What it checks (plain language)
 
+The tool looks for common security headers and cookie flags:
 
-python -m venv .venv
+Content-Security-Policy — controls what external scripts/images/frames the page can load.
 
-.venv\\Scripts\\Activate.ps1
+X-Content-Type-Options — prevents MIME sniffing (nosniff).
 
-pip install -r requirements.txt
+X-Frame-Options — prevents clickjacking (or use CSP frame-ancestors).
 
-python headscan.py https://example.com
+Strict-Transport-Security — tells browsers to always use HTTPS.
 
+Referrer-Policy — controls what URL data is sent to other sites.
 
+Permissions-Policy — controls browser features like camera/microphone.
 
+Cookie flags — checks if cookies include Secure, HttpOnly, and SameSite.
+
+The script prints friendly messages like VULNERABLE / WARNING / OK style lines to help non-experts understand.
 
 
 👨‍💻 Author
