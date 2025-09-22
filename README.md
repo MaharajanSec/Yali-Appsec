@@ -135,9 +135,10 @@ Cookies:
 
 ---
 
-## Quick server snippets (copy-paste)
+##Quick server snippets (copy-paste)
 
-**NGINX**
+NGINX
+Add these lines inside your server { ... } block:
 ```nginx
 add_header Content-Security-Policy "default-src 'self';" always;
 add_header X-Content-Type-Options "nosniff" always;
@@ -145,16 +146,19 @@ add_header X-Frame-Options "SAMEORIGIN" always;
 add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
 add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 add_header Permissions-Policy "geolocation=(), camera=(), microphone=()" always;
+
 ```
 
-**Apache**
+Apache
 ```apache
+Add inside your <VirtualHost> block or .htaccess:
 Header always set Content-Security-Policy "default-src 'self';"
 Header always set X-Content-Type-Options "nosniff"
 Header always set X-Frame-Options "SAMEORIGIN"
 Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "geolocation=(), camera=(), microphone=()"
+
 ```
 
 **Flask (after_request)**
