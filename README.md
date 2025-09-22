@@ -2,9 +2,9 @@
 
 # 
 
-# A collection of \*\*Application Security (AppSec)\*\* resources, labs, and tools.  
+# A collection of Application Security (AppSec) resources, labs, and tools.
 
-# This repository is designed for \*\*learning, testing, and demonstrating\*\* application security practices, aligned with \*\*OWASP Top 10\*\* and other security standards.
+# This repository is designed for learning, testing, and demonstrating application security practices, aligned with OWASP Top 10 and other security standards.
 
 # 
 
@@ -16,17 +16,19 @@
 
 # 
 
-appsec-lab/
+appsec-toolkit/
 
-├── labs/ # Hands-on labs (XSS, SQLi, CSRF, etc.)
+├── headscan.py      # security header checker
 
-├── tools/ # Custom scripts or automation
+├── xsscheck.py      # reflected XSS tester
 
-├── docs/ # Guides, cheat sheets, references
+├── sqli.py          # naive SQLi error detector
 
-├── .gitignore
+├── authcheck.py     # cookie/session security checks
 
-└── LICENSE
+├── README.md        # simple usage guide
+
+├── requirements.txt # requests, bs4
 
 
 
@@ -79,8 +81,4 @@ Unauthorized use may be illegal.
 Maharajan S.N
 
 GitHub: MaharajanSec
-
-
-
-
 
