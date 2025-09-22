@@ -2,11 +2,6 @@
 """
 headscan.py — friendly header checker for beginners
 
-Outputs plain-language results so non-experts (and teammates) can see:
- - what is missing,
- - why it matters in one sentence,
- - a simple fix they can give to devs/ops.
-
 Usage:
     python headscan.py https://example.com
     python headscan.py domain.com
