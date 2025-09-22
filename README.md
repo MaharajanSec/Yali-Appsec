@@ -72,14 +72,19 @@ Overall quick risk: HIGH
 Missing headers (simple explanation and quick fix):
  - Content-Security-Policy: Controls what websites (scripts, images, frames) your page can load.
    Quick fix: Add a CSP that allows only your site and needed services (start with: default-src 'self').
- - X-Content-Type-Options: Stops browsers guessing file types, which can prevent some attacks.
+
+- X-Content-Type-Options: Stops browsers guessing file types, which can prevent some attacks.
    Quick fix: Set header: X-Content-Type-Options: nosniff
+
  - X-Frame-Options: Prevents other sites from embedding your page (clickjacking protection).
    Quick fix: Set header: X-Frame-Options: SAMEORIGIN (or use CSP frame-ancestors).
+
  - Strict-Transport-Security: Tells browsers to always use HTTPS for your site (safer connections).
    Quick fix: Set header: Strict-Transport-Security: max-age=31536000; includeSubDomains
+
  - Referrer-Policy: Controls how much URL info is sent when users click links to other sites.
    Quick fix: Set header: Referrer-Policy: strict-origin-when-cross-origin
+
  - Permissions-Policy: Lets you turn off browser features like camera or microphone for your site.
    Quick fix: Set a simple one: Permissions-Policy: geolocation=(), camera=(), microphone=()
 
