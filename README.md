@@ -93,8 +93,9 @@ Cookie flags — checks if cookies include Secure, HttpOnly, and SameSite.
 The script prints friendly messages like VULNERABLE / WARNING / OK style lines to help non-experts understand.
 
 
-👨‍💻 Author
+👨‍💻 Yali Tech
 
-Maharajan.S.N
-GitHub: MaharajanSec
+This repo is part of Yali Tech’s learning and research in Application Security. We’re sharing our tools and labs openly
+for educational purposes only.
+GitHub: [MaharajanSec](https://github.com/MaharajanSec)
 
