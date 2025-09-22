@@ -31,9 +31,9 @@ Learning resources (links you may add in docs):
 
 ## Headscan
 
-**headscan.py** — a small, friendly header checker for beginners. Quick AppSec triage for HTTP response headers and cookie flags.
+headscan.py — a small, friendly header checker for beginners. Quick AppSec triage for HTTP response headers and cookie flags.
 
-> **Use responsibly.** This repository is for educational purposes only. Do **not** run scans against systems you don't own or have explicit permission to test. Unauthorized testing may be illegal.
+> Use responsibly. This repository is for educational purposes only. Do **not** run scans against systems you don't own or have explicit permission to test. Unauthorized testing may be illegal.
 
 ---
 
@@ -47,7 +47,7 @@ PS D:\yalitech\Yali-Appsec> .venv\Scripts\Activate.ps1
 (.venv) PS D:\yalitech\Yali-Appsec> pip install -r requirements.txt
 ```
 
-(Example installer output omitted for brevity — pip will download `requests` and dependencies.)
+pip will just download requests and a few dependencies
 
 If pip asks you to update, you can run:
 ```powershell
