@@ -95,9 +95,6 @@ The script prints friendly messages like VULNERABLE / WARNING / OK style lines t
 
 👨‍💻 Author
 
-
-
 Maharajan.S.N
-
 GitHub: MaharajanSec
 
