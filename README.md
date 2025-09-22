@@ -74,11 +74,23 @@ Unauthorized use may be illegal.
 
 
 
+python -m venv .venv
+
+.venv\\Scripts\\Activate.ps1
+
+pip install -r requirements.txt
+
+python headscan.py https://example.com
+
+
+
+
+
 👨‍💻 Author
 
 
 
-Maharajan S.N
+Maharajan.S.N
 
 GitHub: MaharajanSec
 
