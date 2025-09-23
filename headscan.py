@@ -1,17 +1,45 @@
 #!/usr/bin/env python3
-"""
-headscan.py — friendly header checker for beginners
-
-Usage:
-    python headscan.py https://example.com
-    python headscan.py domain.com
-    python headscan.py -f urls.txt
-"""
+# headscan.py — friendly header checker for beginners
+#
+# Usage:
+#   python headscan.py https://example.com
+#   python headscan.py domain.com
+#   python headscan.py -f urls.txt
 
 import sys
 import argparse
 import re
 import requests
+
+def parse_security_headers(headers):
+    # Normalize keys to lowercase
+    normalized = {k.lower(): (v or "").strip() for k, v in headers.items()}
+
+    required = {
+        "content-security-policy": "default-src 'self'",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "strict-transport-security": "max-age=31536000; includeSubDomains; preload"
+    }
+
+    missing = []
+    fixes = {}
+
+    for h, fix in required.items():
+        if h not in normalized or normalized[h] == "":
+            missing.append(h)
+            fixes[h] = fix
+
+    high_triggers = {"content-security-policy", "strict-transport-security"}
+    if any(h in high_triggers for h in missing):
+        risk = "HIGH"
+    elif missing:
+        risk = "MEDIUM"
+    else:
+        risk = "LOW"
+
+    return {"missing": missing, "fixes": fixes, "risk": risk}
+
 
 HEADERS_WE_CARE = [
     "Content-Security-Policy",
@@ -22,35 +50,33 @@ HEADERS_WE_CARE = [
     "Permissions-Policy"
 ]
 
-# Plain-language messages and one-line fixes (non-technical)
 HEADER_EXPLAIN = {
     "Content-Security-Policy": (
-        "Controls what websites (scripts, images, frames) your page can load.",
-        "Add a CSP that allows only your site and needed services (start with: default-src 'self')."
+        "Controls what your page is allowed to load (scripts, images, frames).",
+        "Add a CSP that allows only your site and the services you trust (start with: default-src 'self')."
     ),
     "X-Content-Type-Options": (
-        "Stops browsers guessing file types, which can prevent some attacks.",
-        "Set header: X-Content-Type-Options: nosniff"
+        "Stops browsers from guessing file types, which helps prevent some attacks.",
+        "Set: X-Content-Type-Options: nosniff"
     ),
     "X-Frame-Options": (
-        "Prevents other sites from embedding your page (clickjacking protection).",
-        "Set header: X-Frame-Options: SAMEORIGIN (or use CSP frame-ancestors)."
+        "Prevents other sites from embedding your pages (helps against clickjacking).",
+        "Set: X-Frame-Options: SAMEORIGIN (or use CSP frame-ancestors)."
     ),
     "Strict-Transport-Security": (
-        "Tells browsers to always use HTTPS for your site (safer connections).",
-        "Set header: Strict-Transport-Security: max-age=31536000; includeSubDomains"
+        "Tells browsers to always use HTTPS for your site.",
+        "Set: Strict-Transport-Security: max-age=31536000; includeSubDomains"
     ),
     "Referrer-Policy": (
-        "Controls how much URL info is sent when users click links to other sites.",
-        "Set header: Referrer-Policy: strict-origin-when-cross-origin"
+        "Controls how much URL info is sent when users follow links to other sites.",
+        "Set: Referrer-Policy: strict-origin-when-cross-origin"
     ),
     "Permissions-Policy": (
         "Lets you turn off browser features like camera or microphone for your site.",
-        "Set a simple one: Permissions-Policy: geolocation=(), camera=(), microphone=()"
+        "Set: Permissions-Policy: geolocation=(), camera=(), microphone=()"
     ),
 }
 
-# Simple severity points per missing header (higher = worse)
 SEVERITY_POINTS = {
     "Content-Security-Policy": 3,
     "X-Content-Type-Options": 2,
@@ -59,32 +85,65 @@ SEVERITY_POINTS = {
     "Referrer-Policy": 1,
     "Permissions-Policy": 1,
 }
-# cookie problems are high priority
 COOKIE_MISSING_POINTS = 4
+
 
 def normalize_url(u):
     if not u.startswith(("http://", "https://")):
         return "https://" + u
     return u
 
-def split_set_cookie(sc):
-    if not sc:
-        return []
-    # basic split: many servers send a single header or several separated by newline
-    parts = re.split(r'\r\n|\n', sc)
-    if len(parts) == 1:
-        # fallback split on ', ' but avoid splitting on 'Expires' by a heuristic
-        parts = re.split(r', (?=[^ ]+?=)', sc)
-    return [p.strip() for p in parts if p.strip()]
+
+def gather_set_cookie_headers(resp):
+    sc_list = []
+
+    try:
+        raw = getattr(resp, "raw", None)
+        orig = getattr(raw, "_original_response", None)
+        if orig is not None:
+            got = orig.getheaders()
+            for item in got:
+                if isinstance(item, tuple) and len(item) == 2:
+                    k, v = item
+                else:
+                    try:
+                        k, v = item.split(":", 1)
+                    except Exception:
+                        continue
+                if k.strip().lower() == "set-cookie":
+                    sc_list.append(v.strip())
+    except Exception:
+        pass
+
+    if not sc_list:
+        raw_sc = resp.headers.get("Set-Cookie")
+        if raw_sc:
+            parts = re.split(r'\r\n|\n', raw_sc)
+            sc_list = [p.strip() for p in parts if p.strip()]
+
+    return sc_list
+
+
+def parse_set_cookie_attributes(sc):
+    parts = [p.strip() for p in sc.split(";") if p.strip()]
+    attrs = {"secure": False, "httponly": False, "samesite": False}
+    for p in parts[1:]:
+        lower = p.lower()
+        if lower == "secure":
+            attrs["secure"] = True
+        elif lower == "httponly":
+            attrs["httponly"] = True
+        elif lower.startswith("samesite"):
+            attrs["samesite"] = True
+    return attrs
+
 
 def quick_check(url):
-    """Run a quick requests.get and return a simple report dict."""
     try:
         r = requests.get(url, timeout=8, allow_redirects=True)
     except Exception as e:
         return {"url": url, "error": str(e)}
 
-    # headers seen (final response); keep lowercase keys for easy check
     hdrs = {k.lower(): v for k, v in r.headers.items()}
     missing = []
     explanations = []
@@ -97,28 +156,27 @@ def quick_check(url):
             short, fix = HEADER_EXPLAIN.get(h, ("Missing header", "Add the appropriate header"))
             explanations.append((h, short, fix))
 
-    # cookie checks
     cookie_notes = []
-    sc = r.headers.get("Set-Cookie")
-    cookies = split_set_cookie(sc)
-    if cookies:
-        for c in cookies:
-            lc = c.lower()
-            flags = []
-            if "secure" not in lc:
-                flags.append("Secure")
-            if "httponly" not in lc:
-                flags.append("HttpOnly")
-            if "samesite" not in lc:
-                flags.append("SameSite")
-            if flags:
-                cookie_notes.append((c, flags))
+    sc_headers = gather_set_cookie_headers(r)
+
+    if sc_headers:
+        for sc in sc_headers:
+            attrs = parse_set_cookie_attributes(sc)
+            missing_flags = []
+            if not attrs["secure"]:
+                missing_flags.append("Secure")
+            if not attrs["httponly"]:
+                missing_flags.append("HttpOnly")
+            if not attrs["samesite"]:
+                missing_flags.append("SameSite")
+            if missing_flags:
+                cookie_notes.append((sc, missing_flags))
                 points += COOKIE_MISSING_POINTS
+            else:
+                cookie_notes.append((sc, []))
     else:
-        # no cookies at all - that's fine for static sites; note it
         cookie_notes.append(("no Set-Cookie header seen", []))
 
-    # simple risk label
     if points >= 7:
         risk = "HIGH"
     elif points >= 3:
@@ -135,6 +193,7 @@ def quick_check(url):
         "risk": risk
     }
 
+
 def print_friendly(report):
     if "error" in report:
         print(f"\n{report['url']} -> ERROR: {report['error']}")
@@ -150,7 +209,6 @@ def print_friendly(report):
     else:
         print("\nAll the checked headers are present (good).")
 
-    # cookies
     print("\nCookies:")
     for item, flags in report['cookie_notes']:
         if flags:
@@ -160,15 +218,15 @@ def print_friendly(report):
         else:
             print(f" - {item}")
 
-    # very short friendly closing advice
     if report['risk'] == "HIGH":
-        print("\n-> Advice: This site has high-risk gaps. If it's your site, apply the quick fixes above now.")
+        print("\n-> Advice: This site has high-risk gaps. If it's your site, fix the issues above.")
     elif report['risk'] == "MEDIUM":
-        print("\n-> Advice: Medium risk. Fix cookie flags and HSTS/X-Content-Type-Options soon.")
+        print("\n-> Advice: Medium risk. Consider fixing cookie flags and missing headers soon.")
     else:
-        print("\n-> Advice: Low risk from these checks. Continue monitoring.")
+        print("\n-> Advice: Low risk from these checks. Keep monitoring.")
 
-    print("\nTip: For real confirmation, open the site in a browser and check Network → Response Headers.")
+    print("\nTip: For verification, open the site in a browser and check Network → Response Headers.")
+
 
 def main():
     ap = argparse.ArgumentParser(description="Friendly header checker")
@@ -191,9 +249,10 @@ def main():
         sys.exit(1)
 
     for u in urls:
-        u_norm = normalize = (u if u.startswith(("http://", "https://")) else "https://" + u)
+        u_norm = normalize_url(u)
         report = quick_check(u_norm)
         print_friendly(report)
+
 
 if __name__ == "__main__":
     main()
