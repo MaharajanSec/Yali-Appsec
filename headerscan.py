@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-<<<<<<< HEAD
 """
 headscan.py — friendly header checker for beginners
 
@@ -9,14 +8,6 @@ Usage:
     python headscan.py -f urls.txt
     python headscan.py --explain full example.com
 """
-=======
-# headscan.py — friendly header checker for beginners
-#
-# Usage:
-#   python headscan.py https://example.com
-#   python headscan.py domain.com
-#   python headscan.py -f urls.txt
->>>>>>> 3911a22215289c0fc90731a547e6c5f46cca29e1
 
 from __future__ import annotations
 import sys
@@ -99,7 +90,6 @@ HEADER_EXPLAIN = {
     ),
 }
 
-<<<<<<< HEAD
 # Human-first detailed blocks, now with CWE & CVE (NVD) links where available.
 HEADER_DETAILS: Dict[str, Dict[str, Any]] = {
     "Content-Security-Policy": {
@@ -195,8 +185,6 @@ HEADER_DETAILS: Dict[str, Dict[str, Any]] = {
     }
 }
 
-=======
->>>>>>> 3911a22215289c0fc90731a547e6c5f46cca29e1
 SEVERITY_POINTS = {
     "Content-Security-Policy": 3,
     "X-Content-Type-Options": 2,
@@ -208,16 +196,11 @@ SEVERITY_POINTS = {
 COOKIE_MISSING_POINTS = 4
 
 
-<<<<<<< HEAD
 def normalize_url(u: str) -> str:
-=======
-def normalize_url(u):
->>>>>>> 3911a22215289c0fc90731a547e6c5f46cca29e1
     if not u.startswith(("http://", "https://")):
         return "https://" + u
     return u
 
-<<<<<<< HEAD
 
 def parse_set_cookie_header(sc_value: str) -> List[Dict[str, Any]]:
     if not sc_value:
@@ -256,54 +239,6 @@ def parse_set_cookie_header(sc_value: str) -> List[Dict[str, Any]]:
 
 
 def quick_check(url: str, use_head: bool = False, timeout: int = 8, verify: bool = True) -> Dict[str, Any]:
-=======
-
-def gather_set_cookie_headers(resp):
-    sc_list = []
-
-    try:
-        raw = getattr(resp, "raw", None)
-        orig = getattr(raw, "_original_response", None)
-        if orig is not None:
-            got = orig.getheaders()
-            for item in got:
-                if isinstance(item, tuple) and len(item) == 2:
-                    k, v = item
-                else:
-                    try:
-                        k, v = item.split(":", 1)
-                    except Exception:
-                        continue
-                if k.strip().lower() == "set-cookie":
-                    sc_list.append(v.strip())
-    except Exception:
-        pass
-
-    if not sc_list:
-        raw_sc = resp.headers.get("Set-Cookie")
-        if raw_sc:
-            parts = re.split(r'\r\n|\n', raw_sc)
-            sc_list = [p.strip() for p in parts if p.strip()]
-
-    return sc_list
-
-
-def parse_set_cookie_attributes(sc):
-    parts = [p.strip() for p in sc.split(";") if p.strip()]
-    attrs = {"secure": False, "httponly": False, "samesite": False}
-    for p in parts[1:]:
-        lower = p.lower()
-        if lower == "secure":
-            attrs["secure"] = True
-        elif lower == "httponly":
-            attrs["httponly"] = True
-        elif lower.startswith("samesite"):
-            attrs["samesite"] = True
-    return attrs
-
-
-def quick_check(url):
->>>>>>> 3911a22215289c0fc90731a547e6c5f46cca29e1
     try:
         if use_head:
             r = requests.head(url, timeout=timeout, allow_redirects=True, verify=verify)
@@ -324,7 +259,6 @@ def quick_check(url):
             short, fix = HEADER_EXPLAIN.get(h, ("Missing header", "Add the appropriate header"))
             explanations.append((h, short, fix))
 
-<<<<<<< HEAD
     sc_raw = hdrs.get("set-cookie")
     cookies = parse_set_cookie_header(sc_raw) if sc_raw else []
     cookie_notes = []
@@ -344,26 +278,6 @@ def quick_check(url):
                 points += COOKIE_MISSING_POINTS
             else:
                 cookie_notes.append((c.get('raw') or c.get('name'), []))
-=======
-    cookie_notes = []
-    sc_headers = gather_set_cookie_headers(r)
-
-    if sc_headers:
-        for sc in sc_headers:
-            attrs = parse_set_cookie_attributes(sc)
-            missing_flags = []
-            if not attrs["secure"]:
-                missing_flags.append("Secure")
-            if not attrs["httponly"]:
-                missing_flags.append("HttpOnly")
-            if not attrs["samesite"]:
-                missing_flags.append("SameSite")
-            if missing_flags:
-                cookie_notes.append((sc, missing_flags))
-                points += COOKIE_MISSING_POINTS
-            else:
-                cookie_notes.append((sc, []))
->>>>>>> 3911a22215289c0fc90731a547e6c5f46cca29e1
     else:
         cookie_notes.append(("no Set-Cookie header seen", []))
 
@@ -385,7 +299,6 @@ def quick_check(url):
     }
 
 
-<<<<<<< HEAD
 def print_header_detail(name: str):
     details = HEADER_DETAILS.get(name)
     if not details:
@@ -422,9 +335,6 @@ def print_header_detail(name: str):
 
 
 def print_friendly(report: Dict[str, Any], explain: str = "short"):
-=======
-def print_friendly(report):
->>>>>>> 3911a22215289c0fc90731a547e6c5f46cca29e1
     if "error" in report:
         print(f"\n{RED}{report['url']} -> ERROR: {report['error']}{RESET}")
         return
@@ -456,7 +366,6 @@ def print_friendly(report):
         else:
             print(f" - {item}")
 
-<<<<<<< HEAD
     # If cvv_report included in report, show it (backwards-compatible: only shown if caller added it)
     cvv = report.get('cvv_report')
     if cvv:
@@ -473,16 +382,6 @@ def print_friendly(report):
         print(f"\n{GREEN}-> Advice: Low risk from these checks. Continue monitoring.{RESET}")
 
     print("\nTip: For confirmation, open the site in a browser and check Network → Response Headers.")
-=======
-    if report['risk'] == "HIGH":
-        print("\n-> Advice: This site has high-risk gaps. If it's your site, fix the issues above.")
-    elif report['risk'] == "MEDIUM":
-        print("\n-> Advice: Medium risk. Consider fixing cookie flags and missing headers soon.")
-    else:
-        print("\n-> Advice: Low risk from these checks. Keep monitoring.")
-
-    print("\nTip: For verification, open the site in a browser and check Network → Response Headers.")
->>>>>>> 3911a22215289c0fc90731a547e6c5f46cca29e1
 
 
 def main():
@@ -512,15 +411,8 @@ def main():
 
     for u in urls:
         u_norm = normalize_url(u)
-<<<<<<< HEAD
         report = quick_check(u_norm, use_head=args.head, timeout=args.timeout, verify=not args.insecure)
         print_friendly(report, explain=args.explain)
-
-=======
-        report = quick_check(u_norm)
-        print_friendly(report)
->>>>>>> 3911a22215289c0fc90731a547e6c5f46cca29e1
-
 
 if __name__ == "__main__":
     main()
