@@ -62,6 +62,7 @@ Run the header scan:
 
 ```powershell
 python headscan.py https://example.com
+python headerscan.py --explain full example.com
 ```
 
 ### Sample output (insecure site)
@@ -109,7 +110,7 @@ Cookies:
 
 ---
 
-## Quick header cheat-sheet (for rookies)
+## Quick header cheat-sheet 
 
 - **Content-Security-Policy (CSP)**  
   Purpose: restrict which scripts, images and resources the page can load — strong defense against XSS.  
